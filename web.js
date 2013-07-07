@@ -6,7 +6,7 @@ var app = express.createServer(express.logger());
 
 fs.readFile('index.html', function (err, data) { 
 if (err) throw err;
-  index_html = data; 
+  index_html = data.toString('utf-8'); 
   // console.log(data);
 });
 
