@@ -22,6 +22,7 @@ References:
 */
 
 var fs = require('fs');
+var sys = require('sys');
 var program = require('commander');
 var cheerio = require('cheerio');
 var rest = require('restler');
@@ -67,7 +68,8 @@ if(require.main == module) {
     program
         .option('-c, --checks <check_file>', 'Path to checks.json', clone(assertFileExists), CHECKSFILE_DEFAULT)
         .option('-f, --file <html_file>', 'Path to index.html', clone(assertFileExists), HTMLFILE_DEFAULT)
-        .option('-u, --url <url_file>', 'Path to url.html', clone(assertFileExists), URLFILE_DEFAULT)
+        .option('-u, --url <url_file>', 'Path to url.html')
+        // .option('-u, --url <url_file>', 'Path to url.html', clone(assertFileExists), URLFILE_DEFAULT)
         .parse(process.argv);
 
     var checkJson;
@@ -76,12 +78,12 @@ if(require.main == module) {
     	checkJson = checkHtmlFile(program.file, program.checks);
     }
     if (program.url) {
+	fs.writeFileSync(URLFILE_DEFAULT, '');
 	rest.get(program.url).on('complete', function(result) {
   	if (result instanceof Error) {
     		sys.puts('Error: ' + result.message);
     		this.retry(5000); // try again after 5 sec
   	} else {
-    		// sys.puts(result);
 		fs.writeFileSync(URLFILE_DEFAULT, result);
   	}
 	});
